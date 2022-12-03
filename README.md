@@ -24,8 +24,8 @@ $ npm install
 
 ```
 STRIPE_API_KEY=test_api_key
-STRIPE_SUCCESS_URL=sample-url?id={CHECKOUT_SESSION_ID}
-STRIPE_FAILURE_URL=sammple-url?id={CHECKOUT_SESSION_ID}
+STRIPE_SUCCESS_URL=http://localhost:3000/payments/success?id={CHECKOUT_SESSION_ID}
+STRIPE_FAILURE_URL=http://localhost:3000/payments/success?id={CHECKOUT_SESSION_ID}
 JWT_SECRET=secret
 ```
 
