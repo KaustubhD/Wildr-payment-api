@@ -1,5 +1,5 @@
 import { User } from "../../users/entities/user.entity";
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, Index } from "typeorm";
 import { Currency } from "../enums/Currency";
 import { PaymentStatus } from "../enums/PaymentStatus";
 
@@ -8,6 +8,7 @@ export class Payment {
   @PrimaryGeneratedColumn('uuid')
   public transactionId: string;
 
+  @Index()
   @ManyToOne(() => User, { eager: false, nullable: false })
   @JoinColumn({ name: 'userId', referencedColumnName: 'userId'})
   public user: User;

@@ -8,6 +8,7 @@ import { StripeService } from './providers/stripe.service';
 import Stripe from 'stripe';
 import * as util from 'util';
 import { PaymentStatus } from './enums/PaymentStatus';
+import { AuthenticatedUserDto } from '../common/dto/authenticatedUser.dto';
 
 @Injectable()
 export class PaymentsService {
@@ -19,11 +20,11 @@ export class PaymentsService {
   ) {}
 
 
-  async createPaymentFor(dto: CreatePaymentDto) {
+  async createPaymentFor(dto: CreatePaymentDto, user: AuthenticatedUserDto) {
     let stripeSession: Stripe.Response<Stripe.Checkout.Session>;
     try {
-      const userRecord = await this.usersRepository.findOneBy({ userId: dto.userId });
-      stripeSession = await this.createStripeSession(dto);
+      const userRecord = await this.usersRepository.findOneBy({ userId: user.userId });
+      stripeSession = await this.createStripeSession(dto, user);
       const newPayment = this.paymentsRepository.create({
         stripeSessionId: stripeSession.id,
         amount: dto.amount,
@@ -66,14 +67,14 @@ export class PaymentsService {
     return { message: 'Payment failed' };
   }
 
-  private async createStripeSession(dto: CreatePaymentDto): Promise<Stripe.Response<Stripe.Checkout.Session>> {
+  private async createStripeSession(dto: CreatePaymentDto, user: AuthenticatedUserDto): Promise<Stripe.Response<Stripe.Checkout.Session>> {
     return this.stripeService.getInstance().checkout.sessions.create({
       success_url: process.env.STRIPE_SUCCESS_URL,
       cancel_url: process.env.STRIPE_FAILURE_URL,
       payment_method_types: ['card'],
       mode: 'payment',
       currency: dto.currency.toString(),
-      customer_email: dto.email,
+      customer_email: user.email,
       line_items: [
         {
           price_data: {
