@@ -67,6 +67,10 @@ export class PaymentsService {
     return { message: 'Payment failed' };
   }
 
+  public async getAllPaymentsForUser(userDto: AuthenticatedUserDto): Promise<Payment[]> {
+    return this.paymentsRepository.find({ where: { user: { userId: userDto.userId }} });
+  }
+
   private async createStripeSession(dto: CreatePaymentDto, user: AuthenticatedUserDto): Promise<Stripe.Response<Stripe.Checkout.Session>> {
     return this.stripeService.getInstance().checkout.sessions.create({
       success_url: process.env.STRIPE_SUCCESS_URL,
@@ -101,4 +105,5 @@ export class PaymentsService {
   private getCurrentTimestamp(): string {
     return new Date().toUTCString();
   }
+
 }

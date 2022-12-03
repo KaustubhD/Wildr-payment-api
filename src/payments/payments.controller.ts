@@ -15,6 +15,12 @@ export class PaymentsController {
     return this.paymentsService.createPaymentFor(userDto, user);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Get('')
+  public getPayments(@User() userDto: AuthenticatedUserDto) {
+    return this.paymentsService.getAllPaymentsForUser(userDto);
+  }
+
   @Get('success')
   public paymentSuccessPage(@Query('id') sessionId: string) {
     return this.paymentsService.markPaymentSuccess(sessionId);

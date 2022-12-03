@@ -21,11 +21,11 @@ export class UsersService {
   }
 
   async findAll(): Promise<User[]> {
-    return this.userRepository.find();
+    return (await this.userRepository.find()).map(this.removeSensitiveInfo);
   }
 
   async findOne(userId: string): Promise<User> {
-    return this.userRepository.findOneBy({ userId });
+    return this.removeSensitiveInfo(await this.userRepository.findOneBy({ userId }));
   }
   async findOneByEmail(email: string): Promise<User> {
     return this.userRepository.findOneBy({ email });
@@ -40,5 +40,14 @@ export class UsersService {
     const userRecord = await this.findOne(id);
     this.userRepository.save({ ...userRecord, isActive: false });
     return;
+  }
+
+  removeSensitiveInfo(user: User): User {
+    if (user) {
+      delete user['password'];
+      delete user['isActive'];
+    }
+
+    return user;
   }
 }
